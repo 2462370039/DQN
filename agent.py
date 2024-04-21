@@ -12,11 +12,11 @@ class ReplayMemory:
         self.MEMORY_SIZE = 1000
         self.BARCH_SIZE = 64
 
-        self.all_s = np.empty(shape=(self.MEMORY_SIZE, self.n_s), dtype=np.float32)
+        self.all_s = np.empty(shape=(self.MEMORY_SIZE, self.n_s), dtype=np.float64)
         self.all_a = np.random.randint(low=0, high=self.n_a, size=self.MEMORY_SIZE, dtype=np.uint8)
-        self.all_r = np.empty(shape=self.MEMORY_SIZE, dtype=np.float32)
+        self.all_r = np.empty(shape=self.MEMORY_SIZE, dtype=np.float64)
         self.all_done = np.random.randint(low=0, high=2, size=self.MEMORY_SIZE, dtype=np.uint8)
-        self.all_s_ = np.empty(shape=(self.MEMORY_SIZE, self.n_s), dtype=np.float32)
+        self.all_s_ = np.empty(shape=(self.MEMORY_SIZE, self.n_s), dtype=np.float64)
 
         self.t_max = 0
         self.t_memo = 0
@@ -65,9 +65,9 @@ class DQN(nn.Module):
         super().__init__()
 
         self.net = nn.Sequential(
-            nn.Linear(n_input, 88),
+            nn.Linear(n_input, 64),
             nn.Tanh(),
-            nn.Linear(88, n_output)
+            nn.Linear(64, n_output)
         )
 
     def forward(self, x):
@@ -87,11 +87,11 @@ class Agent:
         self.n_output = n_output
 
         self.GAMMA = 0.99
-        self.learing_rate = 0.0001
+        self.learning_rate = 0.001
 
         self.memo = ReplayMemory(n_input, n_output)
 
         self.online_net = DQN(self.n_input, self.n_output)
         self.target_net = DQN(self.n_input, self.n_output)
 
-        self.optimizer = torch.optim.Adam(self.online_net.parameters(), lr=self.learing_rate)
+        self.optimizer = torch.optim.Adam(self.online_net.parameters(), lr=self.learning_rate)
